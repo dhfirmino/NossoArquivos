@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { FolderPlus, Upload, LogOut, Search, Folder } from 'lucide-react';
+import { FolderPlus, Upload, LogOut, Search } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth.ts';
 import { useListFolder, useCreateFolder, useDeleteFolder, useUploadFiles, useDeleteFile } from '../hooks/useFiles.ts';
 import { Breadcrumb } from '../components/Breadcrumb.tsx';
@@ -92,12 +92,17 @@ export function FileManager({ theme, onToggleTheme }: FileManagerProps) {
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-transparent transition-colors relative">
         <div className="px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            {/* Gradient folder icon */}
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center">
-              <Folder className="w-4.5 h-4.5 text-white" fill="white" fillOpacity={0.3} />
-            </div>
-            <h1 className="text-lg font-bold text-gray-800 dark:text-gray-100">NossoArquivos</h1>
+          <div className="flex items-center">
+            <img
+              src="/Nossocloud.png"
+              alt="NossoCloud"
+              className="h-8 dark:hidden"
+            />
+            <img
+              src="/Nossocloud-white.png"
+              alt="NossoCloud"
+              className="h-8 hidden dark:block"
+            />
           </div>
           <div className="flex items-center gap-3">
             <ThemeToggle theme={theme} onToggle={onToggleTheme} />
@@ -114,7 +119,7 @@ export function FileManager({ theme, onToggleTheme }: FileManagerProps) {
           </div>
         </div>
         {/* Subtle gradient bottom border */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-blue-500/20 via-purple-500/30 to-pink-500/20" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-orange-500/20 via-orange-500/30 to-blue-700/20" />
       </header>
 
       {/* Toolbar */}
@@ -129,7 +134,7 @@ export function FileManager({ theme, onToggleTheme }: FileManagerProps) {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Filtrar arquivos..."
-              className="pl-8 pr-3 py-2 text-sm w-48 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+              className="pl-8 pr-3 py-2 text-sm w-48 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-colors"
             />
           </div>
           <button
@@ -141,7 +146,7 @@ export function FileManager({ theme, onToggleTheme }: FileManagerProps) {
           </button>
           <button
             onClick={() => setShowUpload(true)}
-            className="flex items-center gap-1.5 px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 shadow-sm hover:shadow transition-all"
+            className="flex items-center gap-1.5 px-3 py-2 text-sm bg-orange-600 text-white rounded-md hover:bg-orange-700 shadow-sm hover:shadow transition-all"
           >
             <Upload className="w-4 h-4" />
             Upload

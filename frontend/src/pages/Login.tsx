@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth.ts';
-import { CloudUpload, Link, FolderOpen, LogIn } from 'lucide-react';
+import { CloudUpload, Link, FolderOpen } from 'lucide-react';
 
 const slides = [
   {
@@ -77,13 +77,17 @@ export function Login() {
         {/* Left side — Form */}
         <div className="w-full md:w-1/2 flex flex-col justify-between bg-white dark:bg-gray-900 px-6 py-10 sm:px-12 lg:px-20">
           {/* Logo */}
-          <div className="flex items-center gap-2.5">
-            <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600">
-              <LogIn className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
-              NossoArquivos
-            </span>
+          <div>
+            <img
+              src="/Nossocloud.png"
+              alt="NossoCloud"
+              className="h-10 dark:hidden"
+            />
+            <img
+              src="/Nossocloud-white.png"
+              alt="NossoCloud"
+              className="h-10 hidden dark:block"
+            />
           </div>
 
           {/* Form */}
@@ -110,7 +114,7 @@ export function Login() {
                   onChange={(e) => setUsername(e.target.value)}
                   required
                   placeholder="Seu nome de usuário"
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
 
@@ -128,7 +132,7 @@ export function Login() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   placeholder="••••••••"
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
 
@@ -141,7 +145,7 @@ export function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-semibold shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:from-indigo-700 hover:to-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 cursor-pointer"
+                className="w-full py-2.5 rounded-lg bg-gradient-to-r from-orange-600 to-blue-700 text-white font-semibold shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:from-orange-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 cursor-pointer"
               >
                 {loading ? 'Entrando...' : 'Entrar'}
               </button>
@@ -158,7 +162,7 @@ export function Login() {
         </div>
 
         {/* Right side — Showcase (hidden below md) */}
-        <div className="hidden md:flex md:w-1/2 relative bg-gradient-to-br from-indigo-600 via-purple-600 to-violet-700 flex-col items-center justify-center px-12 lg:px-20 overflow-hidden">
+        <div className="hidden md:flex md:w-1/2 relative bg-gradient-to-br from-orange-600 via-orange-500 to-blue-700 flex-col items-center justify-center px-12 lg:px-20 overflow-hidden">
           {/* Decorative background circles */}
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/5" />
@@ -166,11 +170,13 @@ export function Login() {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-white/5" />
           </div>
 
-          {/* Subtle branding */}
+          {/* Logo branding */}
           <div className="absolute top-10 left-12 lg:left-20">
-            <span className="text-white/60 text-sm font-medium tracking-wide">
-              NossoArquivos
-            </span>
+            <img
+              src="/Nossocloud-white.png"
+              alt="NossoCloud"
+              className="h-8 opacity-60"
+            />
           </div>
 
           {/* Carousel */}
