@@ -37,7 +37,7 @@ export async function fileRoutes(fastify) {
     return { message: 'Arquivo removido', path };
   });
 
-  fastify.get('/api/files/*/info', async (request) => {
+  fastify.get('/api/files-info/*', async (request) => {
     const path = request.params['*'];
     const info = await getObjectInfo(path);
     return { path, ...info };
