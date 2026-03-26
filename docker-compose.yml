@@ -1,0 +1,23 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    networks:
+      - nossoarquivos_net
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    expose:
+      - "3000"
+    env_file: .env
+    networks:
+      - nossoarquivos_net
+    restart: unless-stopped
+
+networks:
+  nossoarquivos_net:
+    driver: bridge
