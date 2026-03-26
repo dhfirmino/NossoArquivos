@@ -45,17 +45,17 @@ export function UploadModal({ currentPath, onUpload, onClose, isUploading }: Upl
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg p-6 animate-modal-enter">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Upload de Arquivos</h2>
-          <button onClick={onClose}>
-            <X className="w-5 h-5 text-gray-500" />
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Upload de Arquivos</h2>
+          <button onClick={onClose} className="hover:opacity-75 transition-opacity">
+            <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </button>
         </div>
 
         {currentPath && (
-          <p className="text-sm text-gray-500 mb-3">
-            Destino: <span className="font-medium">{currentPath}/</span>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+            Destino: <span className="font-medium text-gray-700 dark:text-gray-300">{currentPath}/</span>
           </p>
         )}
 
@@ -66,14 +66,16 @@ export function UploadModal({ currentPath, onUpload, onClose, isUploading }: Upl
             onDragLeave={() => setDragOver(false)}
             onClick={openFilePicker}
             className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
-              dragOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
+              dragOver
+                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
             }`}
           >
-            <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-            <p className="text-sm text-gray-600">
+            <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400 dark:text-gray-500" />
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               Arraste arquivos aqui ou clique para selecionar
             </p>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
               Você pode selecionar múltiplos arquivos
             </p>
           </div>
@@ -89,16 +91,16 @@ export function UploadModal({ currentPath, onUpload, onClose, isUploading }: Upl
           {files.length > 0 && (
             <div className="max-h-40 overflow-y-auto space-y-1">
               {files.map((file, i) => (
-                <div key={`${file.name}-${i}`} className="flex items-center justify-between text-sm py-1 px-2 bg-gray-50 rounded">
+                <div key={`${file.name}-${i}`} className="flex items-center justify-between text-sm py-1 px-2 bg-gray-50 dark:bg-gray-700 rounded transition-colors">
                   <div className="flex items-center gap-2 truncate">
-                    <FileIcon className="w-4 h-4 text-gray-400 shrink-0" />
-                    <span className="truncate">{file.name}</span>
-                    <span className="text-gray-400 shrink-0">
+                    <FileIcon className="w-4 h-4 text-gray-400 dark:text-gray-500 shrink-0" />
+                    <span className="truncate text-gray-700 dark:text-gray-200">{file.name}</span>
+                    <span className="text-gray-400 dark:text-gray-500 shrink-0">
                       ({(file.size / 1024).toFixed(0)} KB)
                     </span>
                   </div>
                   <button type="button" onClick={() => removeFile(i)}>
-                    <X className="w-4 h-4 text-gray-400 hover:text-red-500" />
+                    <X className="w-4 h-4 text-gray-400 hover:text-red-500 transition-colors" />
                   </button>
                 </div>
               ))}
@@ -110,7 +112,7 @@ export function UploadModal({ currentPath, onUpload, onClose, isUploading }: Upl
               <button
                 type="button"
                 onClick={openFilePicker}
-                className="px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-md"
+                className="px-3 py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors"
               >
                 + Adicionar mais
               </button>
@@ -119,14 +121,14 @@ export function UploadModal({ currentPath, onUpload, onClose, isUploading }: Upl
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md"
+                className="px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={files.length === 0 || isUploading}
-                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors"
               >
                 {isUploading ? 'Enviando...' : `Enviar (${files.length})`}
               </button>
@@ -134,6 +136,22 @@ export function UploadModal({ currentPath, onUpload, onClose, isUploading }: Upl
           </div>
         </form>
       </div>
+
+      <style>{`
+        @keyframes modal-enter {
+          from {
+            transform: scale(0.95);
+            opacity: 0;
+          }
+          to {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+        .animate-modal-enter {
+          animation: modal-enter 0.2s ease-out;
+        }
+      `}</style>
     </div>
   );
 }

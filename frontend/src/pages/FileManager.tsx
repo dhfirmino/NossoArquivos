@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { FolderPlus, Upload, LogOut } from 'lucide-react';
+import { useState, useCallback, useMemo } from 'react';
+import { FolderPlus, Upload, LogOut, Search, Folder } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth.ts';
 import { useListFolder, useCreateFolder, useDeleteFolder, useUploadFiles, useDeleteFile } from '../hooks/useFiles.ts';
 import { Breadcrumb } from '../components/Breadcrumb.tsx';
@@ -27,6 +27,7 @@ export function FileManager({ theme, onToggleTheme }: FileManagerProps) {
   const [showUpload, setShowUpload] = useState(false);
   const [toast, setToast] = useState<ToastState | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<FileItem | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const { data, isLoading, error } = useListFolder(currentPath);
   const createFolder = useCreateFolder();
@@ -79,40 +80,68 @@ export function FileManager({ theme, onToggleTheme }: FileManagerProps) {
     showToast('Link copiado!', 'success');
   }
 
-  const items = [...(data?.folders || []), ...(data?.files || [])];
+  const items = useMemo(() => {
+    const all = [...(data?.folders || []), ...(data?.files || [])];
+    if (!searchTerm.trim()) return all;
+    const term = searchTerm.toLowerCase();
+    return all.filter((item) => item.name.toLowerCase().includes(term));
+  }, [data, searchTerm]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
-        <h1 className="text-lg font-bold text-gray-800">NossoArquivos</h1>
-        <div className="flex items-center gap-3">
-          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
-          <span className="text-sm text-gray-600">{user?.nome_colaborador}</span>
-          <button
-            onClick={logout}
-            className="flex items-center gap-1 text-sm text-gray-500 hover:text-red-600"
-          >
-            <LogOut className="w-4 h-4" />
-            Sair
-          </button>
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-transparent transition-colors relative">
+        <div className="px-6 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            {/* Gradient folder icon */}
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center">
+              <Folder className="w-4.5 h-4.5 text-white" fill="white" fillOpacity={0.3} />
+            </div>
+            <h1 className="text-lg font-bold text-gray-800 dark:text-gray-100">NossoArquivos</h1>
+          </div>
+          <div className="flex items-center gap-3">
+            <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+            <span className="text-sm text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 px-2.5 py-1 rounded-full">
+              {user?.nome_colaborador}
+            </span>
+            <button
+              onClick={logout}
+              className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+              Sair
+            </button>
+          </div>
         </div>
+        {/* Subtle gradient bottom border */}
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-blue-500/20 via-purple-500/30 to-pink-500/20" />
       </header>
 
       {/* Toolbar */}
-      <div className="px-6 py-4 flex items-center justify-between">
+      <div className="px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <Breadcrumb path={currentPath} onNavigate={setCurrentPath} />
         <div className="flex items-center gap-2">
+          {/* Search input */}
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500" />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Filtrar arquivos..."
+              className="pl-8 pr-3 py-2 text-sm w-48 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+            />
+          </div>
           <button
             onClick={() => setShowNewFolder(true)}
-            className="flex items-center gap-1.5 px-3 py-2 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+            className="flex items-center gap-1.5 px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm hover:shadow transition-all"
           >
             <FolderPlus className="w-4 h-4" />
             Nova Pasta
           </button>
           <button
             onClick={() => setShowUpload(true)}
-            className="flex items-center gap-1.5 px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="flex items-center gap-1.5 px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 shadow-sm hover:shadow transition-all"
           >
             <Upload className="w-4 h-4" />
             Upload
@@ -122,11 +151,11 @@ export function FileManager({ theme, onToggleTheme }: FileManagerProps) {
 
       {/* Content */}
       <div className="px-6">
-        <div className="bg-white rounded-lg border border-gray-200">
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors">
           {isLoading ? (
-            <div className="text-center py-12 text-gray-500">Carregando...</div>
+            <div className="text-center py-12 text-gray-500 dark:text-gray-400">Carregando...</div>
           ) : error ? (
-            <div className="text-center py-12 text-red-500">
+            <div className="text-center py-12 text-red-500 dark:text-red-400">
               Erro ao carregar: {error instanceof Error ? error.message : 'Erro desconhecido'}
             </div>
           ) : (
@@ -161,28 +190,44 @@ export function FileManager({ theme, onToggleTheme }: FileManagerProps) {
       {/* Delete confirmation */}
       {deleteConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40">
-          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-sm">
-            <h2 className="text-lg font-semibold mb-2">Confirmar exclusão</h2>
-            <p className="text-sm text-gray-600 mb-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-sm animate-modal-enter border border-red-200/50 dark:border-red-900/30">
+            <h2 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">Confirmar exclusão</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
               Tem certeza que deseja excluir{' '}
-              <span className="font-medium">{deleteConfirm.name}</span>
+              <span className="font-medium text-red-600 dark:text-red-400">{deleteConfirm.name}</span>
               {deleteConfirm.type === 'folder' && ' e todo seu conteúdo'}?
             </p>
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setDeleteConfirm(null)}
-                className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md"
+                className="px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleDelete}
-                className="px-4 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700"
+                className="px-4 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
               >
                 Excluir
               </button>
             </div>
           </div>
+
+          <style>{`
+            @keyframes modal-enter {
+              from {
+                transform: scale(0.95);
+                opacity: 0;
+              }
+              to {
+                transform: scale(1);
+                opacity: 1;
+              }
+            }
+            .animate-modal-enter {
+              animation: modal-enter 0.2s ease-out;
+            }
+          `}</style>
         </div>
       )}
 
