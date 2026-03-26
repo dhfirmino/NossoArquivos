@@ -9,13 +9,13 @@ import { authRoutes } from './routes/auth.js';
 
 const fastify = Fastify({
   logger: true,
-  bodyLimit: 104857600, // 100MB
+  bodyLimit: 1073741824, // 1GB
 });
 
 await fastify.register(cors);
 await fastify.register(multipart, {
   limits: {
-    fileSize: 104857600, // 100MB
+    fileSize: 1073741824, // 1GB
   },
 });
 

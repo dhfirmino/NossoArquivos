@@ -8,7 +8,7 @@ export async function authMiddleware(request, reply) {
   }
 
   try {
-    const response = await fetch(`${config.auth.apiUrl}/api/v2/nossogerenciadorweb/usuario/me`, {
+    const response = await fetch(`${config.auth.apiUrl}/api/v2/nossogerenciadorweb/usuario`, {
       method: 'GET',
       headers: {
         'Authorization': authorization,

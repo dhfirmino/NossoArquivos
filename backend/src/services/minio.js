@@ -13,7 +13,7 @@ const protocol = config.minio.useSSL ? 'https' : 'http';
 
 const s3 = new S3Client({
   endpoint: `${protocol}://${config.minio.endpoint}:${config.minio.port}`,
-  region: 'us-east-1',
+  region: 'sa-east-1',
   credentials: {
     accessKeyId: config.minio.accessKey,
     secretAccessKey: config.minio.secretKey,
