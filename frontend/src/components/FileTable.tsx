@@ -4,6 +4,7 @@ import type { LucideIcon } from 'lucide-react';
 
 interface FileTableProps {
   items: FileItem[];
+  viewMode: 'list' | 'grid';
   onFolderClick: (path: string) => void;
   onDelete: (item: FileItem) => void;
   onCopyLink: (item: FileItem) => void;
@@ -30,18 +31,18 @@ function getFileIcon(name: string): { icon: LucideIcon; color: string } {
 }
 
 function formatSize(bytes?: number): string {
-  if (bytes === undefined) return '-';
+  if (bytes === undefined) return '';
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 function formatDate(dateStr?: string): string {
-  if (!dateStr) return '-';
+  if (!dateStr) return '';
   return new Date(dateStr).toLocaleString('pt-BR');
 }
 
-export function FileTable({ items, onFolderClick, onDelete, onCopyLink }: FileTableProps) {
+export function FileTable({ items, viewMode, onFolderClick, onDelete, onCopyLink }: FileTableProps) {
   if (items.length === 0) {
     return (
       <div className="text-center py-16 text-gray-500 dark:text-gray-400">
@@ -52,8 +53,81 @@ export function FileTable({ items, onFolderClick, onDelete, onCopyLink }: FileTa
     );
   }
 
+  if (viewMode === 'grid') {
+    return (
+      <>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 p-4">
+          {items.map((item, index) => {
+            const { icon: ItemIcon, color: iconColor } = item.type === 'folder'
+              ? { icon: Folder, color: 'text-yellow-500' }
+              : getFileIcon(item.name);
+
+            return (
+              <div
+                key={item.path}
+                className="group relative flex flex-col items-center p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-orange-50 dark:hover:bg-gray-700/50 transition-colors animate-row-fade-in cursor-pointer"
+                style={{ animationDelay: `${index * 30}ms` }}
+                onClick={() => item.type === 'folder' ? onFolderClick(item.path) : undefined}
+              >
+                <ItemIcon className={`w-10 h-10 mb-2 ${iconColor}`} />
+                <span className="text-xs text-center text-gray-700 dark:text-gray-200 truncate w-full" title={item.name}>
+                  {item.name}
+                </span>
+                {item.type === 'file' && item.size !== undefined && (
+                  <span className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{formatSize(item.size)}</span>
+                )}
+
+                {/* Actions overlay */}
+                <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity flex gap-0.5">
+                  {item.type === 'file' && (
+                    <>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onCopyLink(item); }}
+                        title="Copiar link público"
+                        className="p-1 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 rounded bg-white/80 dark:bg-gray-800/80 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
+                      >
+                        <Copy className="w-3.5 h-3.5" />
+                      </button>
+                      <a
+                        href={`/public/${item.path}`}
+                        download
+                        onClick={(e) => e.stopPropagation()}
+                        title="Download"
+                        className="p-1 text-gray-400 hover:text-green-600 dark:hover:text-green-400 rounded bg-white/80 dark:bg-gray-800/80 hover:bg-green-50 dark:hover:bg-green-900/30 transition-colors"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                      </a>
+                    </>
+                  )}
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onDelete(item); }}
+                    title="Excluir"
+                    className="p-1 text-gray-400 hover:text-red-600 dark:hover:text-red-400 rounded bg-white/80 dark:bg-gray-800/80 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <style>{`
+          @keyframes row-fade-in {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .animate-row-fade-in {
+            animation: row-fade-in 0.3s ease-out forwards;
+            opacity: 0;
+          }
+        `}</style>
+      </>
+    );
+  }
+
   return (
-    <div>
+    <>
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-gray-200 dark:border-gray-700 text-left text-gray-500 dark:text-gray-400">
@@ -72,7 +146,7 @@ export function FileTable({ items, onFolderClick, onDelete, onCopyLink }: FileTa
             return (
               <tr
                 key={item.path}
-                className="border-b border-gray-100 dark:border-gray-700/50 hover:bg-indigo-50 dark:hover:bg-gray-700/50 transition-colors animate-row-fade-in"
+                className="border-b border-gray-100 dark:border-gray-700/50 hover:bg-orange-50 dark:hover:bg-gray-700/50 transition-colors animate-row-fade-in"
                 style={{ animationDelay: `${index * 30}ms` }}
               >
                 <td className="py-3 px-4">
@@ -131,20 +205,14 @@ export function FileTable({ items, onFolderClick, onDelete, onCopyLink }: FileTa
 
       <style>{`
         @keyframes row-fade-in {
-          from {
-            opacity: 0;
-            transform: translateY(4px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(4px); }
+          to { opacity: 1; transform: translateY(0); }
         }
         .animate-row-fade-in {
           animation: row-fade-in 0.3s ease-out forwards;
           opacity: 0;
         }
       `}</style>
-    </div>
+    </>
   );
 }

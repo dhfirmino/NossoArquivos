@@ -76,28 +76,22 @@ export function Login() {
       <div className="min-h-screen flex flex-col md:flex-row">
         {/* Left side — Form */}
         <div className="w-full md:w-1/2 flex flex-col justify-between bg-white dark:bg-gray-900 px-6 py-10 sm:px-12 lg:px-20">
-          {/* Logo */}
-          <div>
-            <img
-              src="/Nossocloud.png"
-              alt="NossoCloud"
-              className="h-10 dark:hidden"
-            />
-            <img
-              src="/Nossocloud-white.png"
-              alt="NossoCloud"
-              className="h-10 hidden dark:block"
-            />
-          </div>
+          <div />
 
           {/* Form */}
           <div className="w-full max-w-sm mx-auto">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-              Bem-vindo de volta
-            </h2>
-            <p className="text-gray-500 dark:text-gray-400 mb-8 text-sm">
-              Entre com suas credenciais para acessar o portal.
-            </p>
+            <div className="flex justify-center mb-8">
+              <img
+                src="/Nossocloud.png"
+                alt="NossoCloud"
+                className="h-16 dark:hidden"
+              />
+              <img
+                src="/Nossocloud-white.png"
+                alt="NossoCloud"
+                className="h-16 hidden dark:block"
+              />
+            </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
@@ -145,7 +139,7 @@ export function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-2.5 rounded-lg bg-gradient-to-r from-orange-600 to-blue-700 text-white font-semibold shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:from-orange-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 cursor-pointer"
+                className="w-full py-2.5 rounded-lg bg-orange-600 text-white font-semibold shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 cursor-pointer"
               >
                 {loading ? 'Entrando...' : 'Entrar'}
               </button>
@@ -168,15 +162,6 @@ export function Login() {
             <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/5" />
             <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] rounded-full bg-white/5" />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-white/5" />
-          </div>
-
-          {/* Logo branding */}
-          <div className="absolute top-10 left-12 lg:left-20">
-            <img
-              src="/Nossocloud-white.png"
-              alt="NossoCloud"
-              className="h-8 opacity-60"
-            />
           </div>
 
           {/* Carousel */}

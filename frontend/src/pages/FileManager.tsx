@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { FolderPlus, Upload, LogOut, Search } from 'lucide-react';
+import { FolderPlus, Upload, LogOut, Search, List, LayoutGrid } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth.ts';
 import { useListFolder, useCreateFolder, useDeleteFolder, useUploadFiles, useDeleteFile } from '../hooks/useFiles.ts';
 import { Breadcrumb } from '../components/Breadcrumb.tsx';
@@ -28,6 +28,9 @@ export function FileManager({ theme, onToggleTheme }: FileManagerProps) {
   const [toast, setToast] = useState<ToastState | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<FileItem | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>(() => {
+    return (localStorage.getItem('viewMode') as 'list' | 'grid') || 'list';
+  });
 
   const { data, isLoading, error } = useListFolder(currentPath);
   const createFolder = useCreateFolder();
@@ -90,7 +93,7 @@ export function FileManager({ theme, onToggleTheme }: FileManagerProps) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-transparent transition-colors relative">
+      <header className="bg-white dark:bg-gray-800 transition-colors relative">
         <div className="px-6 py-3 flex items-center justify-between">
           <div className="flex items-center">
             <img
@@ -137,6 +140,23 @@ export function FileManager({ theme, onToggleTheme }: FileManagerProps) {
               className="pl-8 pr-3 py-2 text-sm w-48 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-colors"
             />
           </div>
+          {/* View mode toggle */}
+          <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden">
+            <button
+              onClick={() => { setViewMode('list'); localStorage.setItem('viewMode', 'list'); }}
+              className={`p-2 transition-colors ${viewMode === 'list' ? 'bg-orange-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+              title="Visualização em lista"
+            >
+              <List className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => { setViewMode('grid'); localStorage.setItem('viewMode', 'grid'); }}
+              className={`p-2 transition-colors ${viewMode === 'grid' ? 'bg-orange-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+              title="Visualização em grade"
+            >
+              <LayoutGrid className="w-4 h-4" />
+            </button>
+          </div>
           <button
             onClick={() => setShowNewFolder(true)}
             className="flex items-center gap-1.5 px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm hover:shadow transition-all"
@@ -166,6 +186,7 @@ export function FileManager({ theme, onToggleTheme }: FileManagerProps) {
           ) : (
             <FileTable
               items={items}
+              viewMode={viewMode}
               onFolderClick={setCurrentPath}
               onDelete={setDeleteConfirm}
               onCopyLink={handleCopyLink}
