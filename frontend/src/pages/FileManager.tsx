@@ -52,9 +52,9 @@ export function FileManager({ theme, onToggleTheme }: FileManagerProps) {
     setShowNewFolder(false);
   }
 
-  async function handleUpload(files: File[]) {
+  async function handleUpload(files: File[], onProgress: (percent: number) => void) {
     try {
-      await uploadFiles.mutateAsync({ path: currentPath, files });
+      await uploadFiles.mutateAsync({ path: currentPath, files, onProgress });
       showToast(`${files.length} arquivo(s) enviado(s)`, 'success');
       setShowUpload(false);
     } catch (err) {

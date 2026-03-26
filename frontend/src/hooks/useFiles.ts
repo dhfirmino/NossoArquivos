@@ -37,10 +37,13 @@ export function useDeleteFolder() {
 export function useUploadFiles() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ path, files }: { path: string; files: File[] }) => {
+    mutationFn: ({ path, files, onProgress }: { path: string; files: File[]; onProgress?: (percent: number) => void }) => {
       const formData = new FormData();
       if (path) formData.append('path', path);
       files.forEach((file) => formData.append('files', file));
+      if (onProgress) {
+        return api.upload<UploadResponse>('/api/upload', formData, onProgress);
+      }
       return api.post<UploadResponse>('/api/upload', formData);
     },
     onSuccess: () => {

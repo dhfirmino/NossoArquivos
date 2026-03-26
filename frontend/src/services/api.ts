@@ -38,6 +38,49 @@ async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
   return response.json();
 }
 
+function uploadWithProgress<T>(
+  url: string,
+  formData: FormData,
+  onProgress: (percent: number) => void,
+): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', url);
+
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+    }
+
+    xhr.upload.addEventListener('progress', (e) => {
+      if (e.lengthComputable) {
+        onProgress(Math.round((e.loaded / e.total) * 100));
+      }
+    });
+
+    xhr.addEventListener('load', () => {
+      if (xhr.status === 401) {
+        localStorage.clear();
+        window.location.href = '/login';
+        reject(new ApiError(401, 'Sessão expirada'));
+        return;
+      }
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(JSON.parse(xhr.responseText));
+      } else {
+        const body = JSON.parse(xhr.responseText || '{}');
+        reject(new ApiError(xhr.status, body.error || 'Erro no upload'));
+      }
+    });
+
+    xhr.addEventListener('error', () => {
+      reject(new ApiError(0, 'Erro de conexão'));
+    });
+
+    xhr.send(formData);
+  });
+}
+
 export const api = {
   get: <T>(url: string) => request<T>(url),
   post: <T>(url: string, body?: unknown) =>
@@ -46,4 +89,6 @@ export const api = {
       body: body instanceof FormData ? body : JSON.stringify(body),
     }),
   delete: <T>(url: string) => request<T>(url, { method: 'DELETE' }),
+  upload: <T>(url: string, formData: FormData, onProgress: (percent: number) => void) =>
+    uploadWithProgress<T>(url, formData, onProgress),
 };
