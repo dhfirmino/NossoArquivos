@@ -5,7 +5,7 @@ import { CloudUpload, Link, FolderOpen, LogIn } from 'lucide-react';
 const slides = [
   {
     icon: CloudUpload,
-    title: 'Upload seguro de até 1GB',
+    title: 'Upload seguro e ilimitado',
     description: 'Envie seus arquivos com total segurança e rapidez.',
     animation: 'animate-float',
   },

@@ -53,7 +53,7 @@ export function FileTable({ items, onFolderClick, onDelete, onCopyLink }: FileTa
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div>
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-gray-200 dark:border-gray-700 text-left text-gray-500 dark:text-gray-400">
