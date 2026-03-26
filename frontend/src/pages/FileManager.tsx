@@ -7,14 +7,20 @@ import { FileTable } from '../components/FileTable.tsx';
 import { NewFolderModal } from '../components/NewFolderModal.tsx';
 import { UploadModal } from '../components/UploadModal.tsx';
 import { Toast } from '../components/Toast.tsx';
+import { ThemeToggle } from '../components/ThemeToggle.tsx';
 import type { FileItem } from '../types/index.ts';
+
+interface FileManagerProps {
+  theme: 'light' | 'dark';
+  onToggleTheme: () => void;
+}
 
 interface ToastState {
   message: string;
   type: 'success' | 'error';
 }
 
-export function FileManager() {
+export function FileManager({ theme, onToggleTheme }: FileManagerProps) {
   const { user, logout } = useAuth();
   const [currentPath, setCurrentPath] = useState('');
   const [showNewFolder, setShowNewFolder] = useState(false);
@@ -81,6 +87,7 @@ export function FileManager() {
       <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
         <h1 className="text-lg font-bold text-gray-800">NossoArquivos</h1>
         <div className="flex items-center gap-3">
+          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
           <span className="text-sm text-gray-600">{user?.nome_colaborador}</span>
           <button
             onClick={logout}

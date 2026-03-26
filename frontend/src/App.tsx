@@ -2,8 +2,11 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { Login } from './pages/Login.tsx';
 import { FileManager } from './pages/FileManager.tsx';
 import { ProtectedRoute } from './components/ProtectedRoute.tsx';
+import { useTheme } from './hooks/useTheme.ts';
 
 function App() {
+  const { theme, toggleTheme } = useTheme();
+
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
@@ -11,7 +14,7 @@ function App() {
         path="/"
         element={
           <ProtectedRoute>
-            <FileManager />
+            <FileManager theme={theme} onToggleTheme={toggleTheme} />
           </ProtectedRoute>
         }
       />
