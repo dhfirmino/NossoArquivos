@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { X, Upload, FileIcon } from 'lucide-react';
 
 interface UploadModalProps {
@@ -11,6 +11,7 @@ interface UploadModalProps {
 export function UploadModal({ currentPath, onUpload, onClose, isUploading }: UploadModalProps) {
   const [files, setFiles] = useState<File[]>([]);
   const [dragOver, setDragOver] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -18,6 +19,13 @@ export function UploadModal({ currentPath, onUpload, onClose, isUploading }: Upl
     const dropped = Array.from(e.dataTransfer.files);
     setFiles((prev) => [...prev, ...dropped]);
   }, []);
+
+  function openFilePicker() {
+    if (inputRef.current) {
+      inputRef.current.value = '';
+      inputRef.current.click();
+    }
+  }
 
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files) {
@@ -56,23 +64,27 @@ export function UploadModal({ currentPath, onUpload, onClose, isUploading }: Upl
             onDrop={handleDrop}
             onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
             onDragLeave={() => setDragOver(false)}
+            onClick={openFilePicker}
             className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
               dragOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
             }`}
-            onClick={() => document.getElementById('file-input')?.click()}
           >
             <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
             <p className="text-sm text-gray-600">
               Arraste arquivos aqui ou clique para selecionar
             </p>
-            <input
-              id="file-input"
-              type="file"
-              multiple
-              onChange={handleFileSelect}
-              className="hidden"
-            />
+            <p className="text-xs text-gray-400 mt-1">
+              Você pode selecionar múltiplos arquivos
+            </p>
           </div>
+
+          <input
+            ref={inputRef}
+            type="file"
+            multiple
+            onChange={handleFileSelect}
+            className="hidden"
+          />
 
           {files.length > 0 && (
             <div className="max-h-40 overflow-y-auto space-y-1">
@@ -93,21 +105,32 @@ export function UploadModal({ currentPath, onUpload, onClose, isUploading }: Upl
             </div>
           )}
 
-          <div className="flex justify-end gap-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={files.length === 0 || isUploading}
-              className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-            >
-              {isUploading ? 'Enviando...' : `Enviar (${files.length})`}
-            </button>
+          <div className="flex justify-between">
+            {files.length > 0 && (
+              <button
+                type="button"
+                onClick={openFilePicker}
+                className="px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-md"
+              >
+                + Adicionar mais
+              </button>
+            )}
+            <div className="flex gap-2 ml-auto">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={files.length === 0 || isUploading}
+                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                {isUploading ? 'Enviando...' : `Enviar (${files.length})`}
+              </button>
+            </div>
           </div>
         </form>
       </div>
