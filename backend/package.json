@@ -3,14 +3,18 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node --watch src/server.js",
-    "start": "node src/server.js"
+    "dev": "node --watch -r ./tracing.cjs src/server.js",
+    "start": "node -r ./tracing.cjs src/server.js"
   },
   "dependencies": {
     "fastify": "^5.3.3",
     "@fastify/cors": "^10.0.3",
     "@fastify/multipart": "^9.0.5",
     "@aws-sdk/client-s3": "^3.800.0",
-    "@aws-sdk/lib-storage": "^3.800.0"
+    "@aws-sdk/lib-storage": "^3.800.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.70.1",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.212.0",
+    "@opentelemetry/resources": "^2.5.1",
+    "@opentelemetry/sdk-node": "^0.212.0"
   }
 }
